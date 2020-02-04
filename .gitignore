@@ -1,0 +1,23 @@
+# Ignore all .npz files
+*.npz
+
+# Ignore all .npy files
+*.npy
+
+# Ignore all .csv files
+*.csv
+
+# Ignore all .m files
+*.m
+
+# Ignore all .xlsx files
+*.xlsx
+
+# Ignore all .png files
+*.png
+
+# Ignore all .jpg files
+*.jpg
+
+# Ignore all.zip files
+*.zip
