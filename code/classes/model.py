@@ -1,12 +1,11 @@
 from mesa import Model
-from mesa.space import MultiGrid, ContinuousSpace
+from mesa.space import ContinuousSpace
 from schedule import OneRandomActivation
 from mesa.datacollection import DataCollector
 import matplotlib.pyplot as plt
 import numpy as np
 from agents import Gang, GangMember
-from helpers import *
-import random
+from helpers.helpers import load_colors
 import time
 import networkx as nx
 from tqdm import tqdm
@@ -46,49 +45,18 @@ BOUNDS = [
     ([0, 0, 0], [20, 20, 20])  # bords
 ]
 
-GANGS = {
-    0: Gang(0, (21, 25), 21),
-    1: Gang(1, (65, 77), 15),
-    2: Gang(2, (22, 33), 19)
-}
-
-PARS = {"min_jump_length": 0.1, "bounded_pareto": 1.1, "kappa": 3.5,
-        "weight_bias_home": 1, "highest_max_jump": 200,
-        "lowest_max_jump": 100}
-
-FIXED_PARAMS = {
-    "xmax": 100,
-    "ymax": 100,
-    "min_jump": 0.1,
-    "weight_home": 1
-}
-
-VARIABLE_PARAMS = {
-    "bounded_pareto": np.arange(1, 2, 0.1),
-    "kappa": np.arange(1.5, 4, 0.5)
-}
-
-
-class SpecialMultiGrid(MultiGrid):
-
-    def move_agent(self, agent, pos):
-        pos = self.torus_adj(pos)
-        self._remove_agent(agent.pos_int, agent)
-        self._place_agent(pos, agent)
-        agent.pos_int = pos
-
-    def place_agent(self, agent, pos):
-        self._place_agent(pos, agent)
-        agent.pos_int = pos
-
-
 class GangRivalry(Model):
     """
     """
 
-    def __init__(self, observed_graph, all_graph, boundaries, road_density, areas, xmax=100, ymax=100, min_jump=0.1,
-                 lower_max_jump=100, vision = 3, upper_max_jump=200, weight_home=1,
-                 bounded_pareto=1.1, beta=0.2, kappa=3.5, gang_info=GANGS, threshold=0.04):
+    def __init__(
+            self, observed_graph, all_graph, 
+            boundaries, road_density, areas, 
+            xmax=100, ymax=100, min_jump=0.1, 
+            lower_max_jump=100, upper_max_jump=200, vision=3,
+            weight_home=1, bounded_pareto=1.1, beta=0.2, k
+            appa=3.5, gang_info=GANGS, threshold=0.04
+            ):
         super().__init__()
 
         self.width = xmax
@@ -107,7 +75,7 @@ class GangRivalry(Model):
         self.all_graph = all_graph
         self.observed_graph = observed_graph
         self.area = ContinuousSpace(self.width, self.height, False)
-        # self.grid = SpecialMultiGrid(self.width, self.height, False)
+
         self.schedule = OneRandomActivation(self)
         colors = load_colors(COLORS)
         self.colors = ["#{:02x}{:02x}{:02x}"
@@ -191,29 +159,29 @@ class GangRivalry(Model):
 
         return self.rivalry_matrix
 
-if __name__ == "__main__":
-    road_dens = load_road_density(ROAD_TXT)
-    road_dens = road_dens[::-1]
-    areas = load_areas(AREAS, BOUNDS)
-    height, width = road_dens.shape[0] - 1, road_dens.shape[1] - 1
-    gangs = load_gangs(GANG_INFO)
-    boundaries = load_region_matrix(REGIONS)
-    observed_graph, all_gr = load_connectivity_matrix(OBSERVED_NETWORK, gangs)
-    model = GangRivalry(observed_graph, all_gr, boundaries, road_dens, areas, 
-                        xmax=width, ymax=height,gang_info=gangs)
+# if __name__ == "__main__":
+#     road_dens = load_road_density(ROAD_TXT)
+#     road_dens = road_dens[::-1]
+#     areas = load_areas(AREAS, BOUNDS)
+#     height, width = road_dens.shape[0] - 1, road_dens.shape[1] - 1
+#     gangs = load_gangs(GANG_INFO)
+#     boundaries = load_region_matrix(REGIONS)
+#     observed_graph, all_gr = load_connectivity_matrix(OBSERVED_NETWORK, gangs)
+#     model = GangRivalry(observed_graph, all_gr, boundaries, road_dens, areas, 
+#                         xmax=width, ymax=height,gang_info=gangs)
 
 
-    folder = "simulations_SBLN/"
-    os.makedirs(folder, exist_ok=True)
-    model.run_model(step_count=2000000)
-    data = model.datacollector.get_model_vars_dataframe()
-    data.to_csv(folder + "run6.csv")
-    print(data)
-    # start = time.time()
-    # model.run_model(step_count=10000)
-    # print("Model ran in {} seconds".format(time.time() - start))
+#     folder = "simulations_SBLN/"
+#     os.makedirs(folder, exist_ok=True)
+#     model.run_model(step_count=2000000)
+#     data = model.datacollector.get_model_vars_dataframe()
+#     data.to_csv(folder + "run6.csv")
+#     print(data)
+#     # start = time.time()
+#     # model.run_model(step_count=10000)
+#     # print("Model ran in {} seconds".format(time.time() - start))
 
-    # data = model.datacollector.get_model_vars_dataframe()
-    # print(data.head())
-    # data.plot()
-    # plt.show()
+#     # data = model.datacollector.get_model_vars_dataframe()
+#     # print(data.head())
+#     # data.plot()
+#     # plt.show()

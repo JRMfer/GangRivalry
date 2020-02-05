@@ -1,7 +1,7 @@
 # Agents
 # Agents-based modeling
 # University of Amsterdam
-# Julien Fer
+# Julien Fer, Inge Bieger, Jorien Lokker, Jasper, Heleen
 #
 # This script contains the functionality to represent gang members.
 
@@ -12,13 +12,36 @@ import math
 
 class Gang(object):
     def __init__(self, number, coords, size):
+        """
+        Gang represents a node with a id , 
+        size of members and coordinates
+
+        Input:
+            number: id of gang
+            coords: coordinates set space gang
+            size: members in gang
+        Output:
+            Node representation of Gang with id
+        """
+        
         self.number = number
         self.coords = coords
         self.size = size
 
 class SBLN(Agent):
-    def __init__(self, unique_id, model, pos, number,
-                 min_jump, weight_home, bounded_pareto, kappa, beta):
+    """
+    An agent that moves according a Semi-Biased Levy walk (flight) model. This 
+    agent determines its bias based on all the set space of each gang and on 
+    the current status of the rivalry matrix.
+    """
+
+    def __init__(self, unique_id, model, pos, number, min_jump, 
+                    weight_home, bounded_pareto, kappa, beta):
+        """
+        Each agent is initialized at its home location (set space) and 
+        the Gang's id 
+        """
+
         super().__init__(unique_id, model)
         self.pos = pos
         self.pos_int = (int(pos[0]), int(pos[1]))
