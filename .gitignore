@@ -17,5 +17,5 @@
 **/.DS_Store
 
 ## Ignore all pycache subfolders
- __pycache__/
- *.pyc
+__pycache__/
+*.pyc
