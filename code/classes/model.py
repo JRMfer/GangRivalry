@@ -1,14 +1,16 @@
+from .agents import Gang, GangMember
+from .schedule import OneRandomActivation
 from mesa import Model
 from mesa.space import ContinuousSpace
-from schedule import OneRandomActivation
 from mesa.datacollection import DataCollector
-import matplotlib.pyplot as plt
+
 import numpy as np
-from agents import Gang, GangMember
-from helpers.helpers import load_colors
-import time
+import matplotlib.pyplot as plt
 import networkx as nx
 from tqdm import tqdm
+
+
+# from helpers.helpers import load_colors
 
 AREAS = "../images/area_no_boundaries.jpg"
 ROAD_TXT = "../data/hollenbeckRoadDensity.txt"

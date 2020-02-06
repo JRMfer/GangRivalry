@@ -1,57 +1,26 @@
 # add current structure to path
-import sys
 import os
-directory = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(directory, "code"))
-sys.path.append(os.path.join(directory, "data"))
-sys.path.append(os.path.join(directory, "code", "classes"))
-sys.path.append(os.path.join(directory, "code", "helpers"))
-
+import sys
 import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from model import GangRivalry
-from helpers.helpers import *
+from code.classes.configuration import Configuration
+from code.classes.model import GangRivalry
+from code.helpers.helpers import get_filenames
 
-AREAS = "area_no_boundaries.jpg"
-ROAD_TXT = "hollenbeckRoadDensity.txt"
-GANG_INFO = "gang_information_correct.csv"
-OBSERVED_NETWORK = "Connectivity_matrix_observed_network.xlsx"
-COLORS = "colors.txt"
-REGIONS = "num_bords.csv"
+DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+DATA_DIRECTORY = os.path.join(DIRECTORY, "data")
 
-BOUNDS = [
-    ([60, 50, 120], [70, 60, 130]),  # 15, 1
-    ([0, 100, 0], [10, 115, 10]),  # 20, 2
-    ([0, 0, 170], [10, 5, 185]),  # 21, 3
-    ([120, 70, 0], [135, 80, 10]),  # 11, 4
-    ([0, 105, 120], [5, 115, 135]),  # 22, 5
-    ([0, 45, 120], [5, 55, 135]),  # 14, 6
-    ([230, 230, 230], [255, 255, 255]),  # 23, 7
-    ([50, 60, 240], [60, 70, 255]),  # 2, 8
-    ([240, 0, 170], [255, 10, 185]),  # 24, 9
-    ([200, 0, 240], [235, 20, 255]),  # 4, 10
-    ([70, 235, 120], [90, 255, 150]),  # 3, 11
-    ([0, 100, 250], [10, 110, 255]),  # 16, 12
-    ([140, 0, 160], [155, 5, 175]),  # 13, 13
-    ([240, 30, 0], [255, 45, 10]),  # 12, 14
-    ([0, 200, 240], [10, 240, 255]),  # 6, 15
-    ([230, 230, 0], [255, 255, 20]),  # 5, 16
-    ([0, 0, 110], [10, 10, 130]),  # 7, 17
-    ([220, 170, 245], [255, 190, 255]),  # 9, 18
-    ([80, 100, 110], [90, 120, 120]),  # 19, 19
-    ([60, 50, 0], [70, 60, 10]),  # 1, 20
-    ([35, 110, 20], [65, 140, 50]),  # 10, 21
-    ([105, 0, 235], [120, 10, 255]),  # 8, 22
-    ([0, 240, 60], [5, 255, 80]),  # 17, 23
-    ([0, 240, 175], [5, 255, 190]),  # 18, 24
-    ([0, 0, 0], [20, 20, 20])  # bords
-]
 
 if __name__ == "__main__":
-    pass
-#     road_dens = helpers.load_road_density(ROAD_TXT)
+    if len(sys.argv) != 2:
+        sys.exit("Correct usage: python main.py input_data.txt")
+
+    filenames = get_filenames(DATA_DIRECTORY, sys.argv[1])
+    config = Configuration(filenames)
+    # road_dens = load_road_density(os.path.join(DATA_DIRECTORY, ROAD_TXT))
+    # print(road_dens)
 #     road_dens = road_dens[::-1]
 #     areas = helpers.load_areas(AREAS, BOUNDS)
 #     height, width = road_dens.shape[0] - 1, road_dens.shape[1] - 1
