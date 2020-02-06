@@ -5,7 +5,7 @@
 *.npy
 
 # Ignore all .csv files
-*.csv
+# *.csv
 
 # Ignore all .xlsx files
 *.xlsx
