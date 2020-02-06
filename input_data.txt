@@ -5,3 +5,4 @@ GANG_INFO=gang_information_correct.csv
 OBSERVED_NETWORK=Connectivity_matrix_observed_network.xlsx
 COLORS=colors.txt
 REGIONS=num_bords.csv
+OPT_PARAMETERS=opt_parameters.txt

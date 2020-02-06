@@ -11,8 +11,9 @@ class Configuration(object):
 
     def __init__(self, filenames):
         
-        self.gangs = {}
+        self.gang_info = {}
         self.load_gangs(filenames["GANG_INFO"])
+        self.total_gangs = len(self.gang_info)
 
         self.road_dens = []
         self.load_road_density(filenames["ROAD_TXT"])
@@ -25,12 +26,21 @@ class Configuration(object):
         self.boundaries = []
         self.load_region_matrix(filenames["REGIONS"])
 
-        self.gr = nx.Graph()
+        self.observed_gr = nx.Graph()
         self.all_gr = nx.Graph()
-        self.load_connectivity_matrix(filenames["OBSERVED_NETWORK"], self.gangs)
+        self.load_connectivity_matrix(
+                    filenames["OBSERVED_NETWORK"], 
+                    self.gang_info
+                    )
 
         self.colors = []
         self.load_colors(filenames["COLORS"])
+        self.colors = ["#{:02x}{:02x}{:02x}"
+                        .format(color[0], color[1], color[2]) 
+                        for color in self.colors]
+
+        self.parameters = {}
+        self.load_parameters(filenames["OPT_PARAMETERS"])
 
     def load_gangs(self, filename):
         """
@@ -49,7 +59,7 @@ class Configuration(object):
                 gang = Gang(int(row["gang number"]),
                             (float(row["x location"]), float(row["y"])),
                             int(row["gang members"]))
-                self.gangs[int(row["gang number"])] = gang
+                self.gang_info[int(row["gang number"])] = gang
 
     def load_road_density(self, filename):
         """
@@ -145,9 +155,9 @@ class Configuration(object):
 
         # Add nodes to graph
         for k, gang in gangs.items():
-            self.gr.add_node(k, pos=gang.coords)
+            self.observed_gr.add_node(k, pos=gang.coords)
             
-        self.gr.add_edges_from(edges)
+        self.observed_gr.add_edges_from(edges)
 
         # # Also generate a graph with all possible edges for now?
         rows, cols = np.where(total_matrix == 1)
@@ -169,4 +179,16 @@ class Configuration(object):
                 split = line.split(',')
                 rgb_color = (int(split[0]), int(split[1]), int(split[2]))
                 self.colors.append(rgb_color)
+                line = f.readline().rstrip("\n")
+
+    def load_parameters(self, filename):
+        """
+        """
+
+        with open(filename, 'r') as f:
+            line = f.readline().rstrip("\n")
+
+            while line != '':
+                parameter, value = line.split('=')
+                self.parameters[parameter] = value
                 line = f.readline().rstrip("\n")

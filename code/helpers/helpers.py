@@ -58,8 +58,8 @@ def accuracy_graph(model):
     true_pos, true_neg = 0, 0
     false_pos, false_neg = 0, 0
     graph_edges = set(model.gr.edges)
-    all_edges = set(model.all_graph.edges)
-    observed_graph_edges = set(model.observed_graph.edges)
+    all_edges = set(model.config.all_graph.edges)
+    observed_graph_edges = set(model.config.observed_gr.edges)
 
     non_existing_edges = all_edges ^ observed_graph_edges
     similar_edges = graph_edges & observed_graph_edges
@@ -91,7 +91,7 @@ def plot_simulation(model):
     plt.ylim(0, model.height)
     for agent in model.schedule.agents:
         x, y = agent.pos
-        plt.scatter(x, y, color=model.colors[agent.number], s=2)
+        plt.scatter(x, y, color=model.config.colors[agent.number], s=2)
 
     folder = "../results/"
     os.makedirs(folder, exist_ok=True)
@@ -104,8 +104,9 @@ def shape_metrics(model):
 
     degrees = [degree[1] for degree in model.gr.degree]
     total_degree = sum(degrees)
-    ave_degree = total_degree / model.total_gangs
-    graph_density = total_degree / (model.total_gangs * (model.total_gangs - 1))
+    ave_degree = total_degree / model.config.total_gangs
+    graph_density = total_degree / (model.config.total_gangs * 
+                                        (model.config.total_gangs - 1))
     max_degree = max(degrees)
 
     variance_degree, centrality = 0, 0
@@ -113,7 +114,7 @@ def shape_metrics(model):
         variance_degree += ((degree - ave_degree) * (degree - ave_degree))
         centrality += max_degree - degree
 
-    variance_degree /= model.total_gangs
-    centrality /= ((model.total_gangs - 1) * (model.total_gangs - 2))
+    variance_degree /= model.config.total_gangs
+    centrality /= ((model.config.total_gangs - 1) * (model.total_gangs - 2))
 
     return graph_density, variance_degree, centrality

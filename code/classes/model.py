@@ -1,4 +1,4 @@
-from .agents import Gang, GangMember
+from .agents import Gang, GangMember_SBLN
 from .schedule import OneRandomActivation
 from mesa import Model
 from mesa.space import ContinuousSpace
@@ -9,84 +9,38 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from tqdm import tqdm
 
-
-# from helpers.helpers import load_colors
-
-AREAS = "../images/area_no_boundaries.jpg"
-ROAD_TXT = "../data/hollenbeckRoadDensity.txt"
-GANG_INFO = "../data/gang_information_correct.csv"
-OBSERVED_NETWORK = "../data/Connectivity_matrix_observed_network.xlsx"
-COLORS = "colors.txt"
-REGIONS = "../data/num_bords.csv"
-
-BOUNDS = [
-    ([60, 50, 120], [70, 60, 130]),  # 15, 1
-    ([0, 100, 0], [10, 115, 10]),  # 20, 2
-    ([0, 0, 170], [10, 5, 185]),  # 21, 3
-    ([120, 70, 0], [135, 80, 10]),  # 11, 4
-    ([0, 105, 120], [5, 115, 135]),  # 22, 5
-    ([0, 45, 120], [5, 55, 135]),  # 14, 6
-    ([230, 230, 230], [255, 255, 255]),  # 23, 7
-    ([50, 60, 240], [60, 70, 255]),  # 2, 8
-    ([240, 0, 170], [255, 10, 185]),  # 24, 9
-    ([200, 0, 240], [235, 20, 255]),  # 4, 10
-    ([70, 235, 120], [90, 255, 150]),  # 3, 11
-    ([0, 100, 250], [10, 110, 255]),  # 16, 12
-    ([140, 0, 160], [155, 5, 175]),  # 13, 13
-    ([240, 30, 0], [255, 45, 10]),  # 12, 14
-    ([0, 200, 240], [10, 240, 255]),  # 6, 15
-    ([230, 230, 0], [255, 255, 20]),  # 5, 16
-    ([0, 0, 110], [10, 10, 130]),  # 7, 17
-    ([220, 170, 245], [255, 190, 255]),  # 9, 18
-    ([80, 100, 110], [90, 120, 120]),  # 19, 19
-    ([60, 50, 0], [70, 60, 10]),  # 1, 20
-    ([35, 110, 20], [65, 140, 50]),  # 10, 21
-    ([105, 0, 235], [120, 10, 255]),  # 8, 22
-    ([0, 240, 60], [5, 255, 80]),  # 17, 23
-    ([0, 240, 175], [5, 255, 190]),  # 18, 24
-    ([0, 0, 0], [20, 20, 20])  # bords
-]
-
 class GangRivalry(Model):
     """
     """
 
     def __init__(
-            self, observed_graph, all_graph, 
-            boundaries, road_density, areas, 
-            xmax=100, ymax=100, min_jump=0.1, 
+            self, config,  min_jump=0.1, 
             lower_max_jump=100, upper_max_jump=200, vision=3,
             weight_home=1, bounded_pareto=1.1, beta=0.2, 
-            kappa=3.5, gang_info={}, threshold=0.04
+            kappa=3.5, threshold=0.04
             ):
         super().__init__()
 
-        self.width = xmax
-        self.height = ymax
+        self.config = config
+        self.width = self.config.road_dens.shape[1] - 1
+        self.height = self.config.road_dens.shape[0] - 1
         self.min_jump = min_jump
         self.lower_max_jump = lower_max_jump
         self.upper_max_jump = upper_max_jump
         self.weight_home = weight_home
         self.bounded_pareto = bounded_pareto
         self.kappa = kappa
-        self.gang_info = gang_info
-        self.total_gangs = len(self.gang_info)
-        self.boundaries = boundaries
         self.beta = beta
         self.vision = vision
-        self.all_graph = all_graph
-        self.observed_graph = observed_graph
         self.area = ContinuousSpace(self.width, self.height, False)
 
         self.schedule = OneRandomActivation(self)
-        colors = load_colors(COLORS)
-        self.colors = ["#{:02x}{:02x}{:02x}"
-                    .format(color[0], color[1], color[2]) for color in colors]
         self.init_population()
 
-        self.rivalry_matrix = np.zeros((self.total_gangs, self.total_gangs))
-        self.road_density = road_density
-        self.areas = areas
+        self.rivalry_matrix = np.zeros(
+                (self.config.total_gangs, 
+                self.config.total_gangs)
+                )
         self.threshold = threshold
         self.create_graph()
         self.datacollector = DataCollector(
@@ -104,7 +58,7 @@ class GangRivalry(Model):
     def init_population(self):
         """
         """
-        for gang in self.gang_info.values():
+        for gang in self.config.gang_info.values():
             for _ in range(gang.size):
                 self.new_agent(gang.coords, gang.number)
 
@@ -112,7 +66,7 @@ class GangRivalry(Model):
         """
         """
         x, y = pos
-        agent = GangMember(self.next_id(), self, pos, name, self.min_jump,
+        agent = GangMember_SBLN(self.next_id(), self, pos, name, self.min_jump,
                            self.weight_home, self.bounded_pareto,
                            self.kappa, self.vision, self.beta)
 
@@ -128,13 +82,12 @@ class GangRivalry(Model):
 
     def create_graph(self):
         gr = nx.Graph()
-
-        for gang in self.gang_info.values():
+        for gang in self.config.gang_info.values():
             gr.add_node(gang.number, pos=gang.coords)
         self.gr = gr
 
     def make_graph(self):
-        shape = self.total_gangs
+        shape = self.config.total_gangs
         edges = set(self.gr.edges).copy()
         self.gr.remove_edges_from(edges)
         rivalry_strength = np.zeros((shape, shape))

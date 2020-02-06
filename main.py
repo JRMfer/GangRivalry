@@ -19,6 +19,7 @@ if __name__ == "__main__":
 
     filenames = get_filenames(DATA_DIRECTORY, sys.argv[1])
     config = Configuration(filenames)
+    print(config.parameters)
     # road_dens = load_road_density(os.path.join(DATA_DIRECTORY, ROAD_TXT))
     # print(road_dens)
 #     road_dens = road_dens[::-1]

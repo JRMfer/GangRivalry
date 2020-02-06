@@ -60,7 +60,7 @@ class SBLN(Agent):
 
             # First determines maximum possible jump lenght
             x, y = self.pos
-            road_dens = self.model.road_density[int(y), int(x)]
+            road_dens = self.model.config.road_dens[int(y), int(x)]
             H = ((1 - road_dens) * self.model.upper_max_jump
                  + self.model.lower_max_jump)
 
@@ -71,7 +71,7 @@ class SBLN(Agent):
                     ** (- 1 / k))
 
             # Copies gang information for coordinates set spaces
-            gang_info = self.model.gang_info.copy()
+            gang_info = self.model.config.gang_info.copy()
             bias_home_x, bias_home_y = self.bias_home(gang_info)
             bias_rivals_x, bias_rivals_y = self.bias_rivals(gang_info)
 
@@ -87,16 +87,19 @@ class SBLN(Agent):
             angle_bias = random.vonmisesvariate(bias, self.kappa)
             change_x = jump * math.cos(angle_bias)
             change_y = jump * math.sin(angle_bias)
-            old_region = self.model.areas[(int(x), int(y))]
+            old_region = self.model.config.areas[(int(x), int(y))]
             x += change_x
             y += change_y
 
             if not self.model.area.out_of_bounds((x, y)):
-                new_region = self.model.areas[(int(x), int(y))]
+                new_region = self.model.config.areas[(int(x), int(y))]
                 if new_region == 24:
                     continue
 
-                boundaries = self.model.boundaries[old_region, new_region]
+                boundaries = self.model.config.boundaries[
+                                    old_region, 
+                                    new_region
+                                    ]
                 chance = self.beta ** boundaries
                 
                 if random.uniform(0, 1) < chance:
@@ -150,7 +153,7 @@ class SBLN(Agent):
         return bias_rivals_x, bias_rivals_y
 
 
-class GangMember(SBLN):
+class GangMember_SBLN(SBLN):
     def __init__(self, unique_id, model, pos, gang,
                  min_jump, weight_home, bounded_pareto, kappa, vision, beta):
         super().__init__(unique_id, model, pos, gang,

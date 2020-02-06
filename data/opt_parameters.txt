@@ -1,0 +1,9 @@
+min_jump=0.1
+lower_max_jump=100
+upper_max_jump=200
+vision=3
+weight_home=1
+bounded_pareto=1.1
+beta=0.2
+kappa=3.5
+threshold=0.04
