@@ -54,8 +54,8 @@ class GangRivalry(Model):
             boundaries, road_density, areas, 
             xmax=100, ymax=100, min_jump=0.1, 
             lower_max_jump=100, upper_max_jump=200, vision=3,
-            weight_home=1, bounded_pareto=1.1, beta=0.2, k
-            appa=3.5, gang_info=GANGS, threshold=0.04
+            weight_home=1, bounded_pareto=1.1, beta=0.2, 
+            kappa=3.5, gang_info={}, threshold=0.04
             ):
         super().__init__()
 

@@ -1,18 +1,25 @@
+# add current structure to path
+import sys
 import os
+directory = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(directory, "code"))
+sys.path.append(os.path.join(directory, "data"))
+sys.path.append(os.path.join(directory, "code", "classes"))
+sys.path.append(os.path.join(directory, "code", "helpers"))
+
 import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from mesa.batchrunner import FixedBatchRunner
 from model import GangRivalry
-from helpers import *
+from helpers.helpers import *
 
-AREAS = "../images/area_no_boundaries.jpg"
-ROAD_TXT = "../data/hollenbeckRoadDensity.txt"
-GANG_INFO = "../data/gang_information_correct.csv"
-OBSERVED_NETWORK = "../data/Connectivity_matrix_observed_network.xlsx"
+AREAS = "area_no_boundaries.jpg"
+ROAD_TXT = "hollenbeckRoadDensity.txt"
+GANG_INFO = "gang_information_correct.csv"
+OBSERVED_NETWORK = "Connectivity_matrix_observed_network.xlsx"
 COLORS = "colors.txt"
-REGIONS = "../data/num_bords.csv"
+REGIONS = "num_bords.csv"
 
 BOUNDS = [
     ([60, 50, 120], [70, 60, 130]),  # 15, 1
@@ -42,7 +49,8 @@ BOUNDS = [
     ([0, 0, 0], [20, 20, 20])  # bords
 ]
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
+    pass
 #     road_dens = helpers.load_road_density(ROAD_TXT)
 #     road_dens = road_dens[::-1]
 #     areas = helpers.load_areas(AREAS, BOUNDS)

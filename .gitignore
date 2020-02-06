@@ -5,10 +5,17 @@
 *.npy
 
 # Ignore all .csv files
-# *.csv
+*.csv
 
 # Ignore all .xlsx files
 *.xlsx
 
-# Ignore all.zip files
+# Ignore all .zip files
 *.zip
+
+## Ignore all .ds_store files
+**/.DS_Store
+
+## Ignore all pycache subfolders
+ __pycache__/
+ *.pyc
