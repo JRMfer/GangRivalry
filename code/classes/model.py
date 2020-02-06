@@ -1,8 +1,10 @@
-from .agents import Gang, GangMember_SBLN
-from .schedule import OneRandomActivation
 from mesa import Model
 from mesa.space import ContinuousSpace
 from mesa.datacollection import DataCollector
+from .agents import Gang, GangMember_SBLN
+from .schedule import OneRandomActivation
+from code.helpers.helpers import (get_total_interactions, accuracy_graph,
+                                  shape_metrics, get_rivalry_matrix)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,26 +15,23 @@ class GangRivalry(Model):
     """
     """
 
-    def __init__(
-            self, config,  min_jump=0.1, 
-            lower_max_jump=100, upper_max_jump=200, vision=3,
-            weight_home=1, bounded_pareto=1.1, beta=0.2, 
-            kappa=3.5, threshold=0.04
-            ):
+    def __init__(self, config, algorithm):
         super().__init__()
 
         self.config = config
         self.width = self.config.road_dens.shape[1] - 1
         self.height = self.config.road_dens.shape[0] - 1
-        self.min_jump = min_jump
-        self.lower_max_jump = lower_max_jump
-        self.upper_max_jump = upper_max_jump
-        self.weight_home = weight_home
-        self.bounded_pareto = bounded_pareto
-        self.kappa = kappa
-        self.beta = beta
-        self.vision = vision
+        self.min_jump = self.config.parameters["min_jump"]
+        self.lower_max_jump = self.config.parameters["lower_max_jump"]
+        self.upper_max_jump = self.config.parameters["upper_max_jump"]
+        self.weight_home = self.config.parameters["weight_home"]
+        self.bounded_pareto = self.config.parameters["bounded_pareto"]
+        self.kappa = self.config.parameters["kappa"]
+        self.beta = self.config.parameters["beta"]
+        self.vision = self.config.parameters["vision"]
         self.area = ContinuousSpace(self.width, self.height, False)
+        self.threshold = self.config.parameters["threshold"]
+        self.algorithm = algorithm
 
         self.schedule = OneRandomActivation(self)
         self.init_population()
@@ -41,7 +40,6 @@ class GangRivalry(Model):
                 (self.config.total_gangs, 
                 self.config.total_gangs)
                 )
-        self.threshold = threshold
         self.create_graph()
         self.datacollector = DataCollector(
             model_reporters={
@@ -65,13 +63,16 @@ class GangRivalry(Model):
     def new_agent(self, pos, name):
         """
         """
-        x, y = pos
-        agent = GangMember_SBLN(self.next_id(), self, pos, name, self.min_jump,
-                           self.weight_home, self.bounded_pareto,
-                           self.kappa, self.vision, self.beta)
+        agent = None
+
+        if self.algorithm == "SBLN":
+            x, y = pos
+            agent = GangMember_SBLN(self.next_id(), self, pos, name, 
+                                    self.min_jump, self.weight_home, 
+                                    self.bounded_pareto, self.kappa, 
+                                    self.vision, self.beta)
 
         self.area.place_agent(agent, pos)
-        # self.grid.place_agent(agent, (int(x), int(y)))
         self.schedule.add(agent)
 
     def update_rivalry(self, agent1, agent2):

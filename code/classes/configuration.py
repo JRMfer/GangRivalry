@@ -10,6 +10,8 @@ from .agents import Gang
 class Configuration(object):
 
     def __init__(self, filenames):
+        """
+        """
         
         self.gang_info = {}
         self.load_gangs(filenames["GANG_INFO"])
@@ -159,7 +161,7 @@ class Configuration(object):
             
         self.observed_gr.add_edges_from(edges)
 
-        # # Also generate a graph with all possible edges for now?
+        # # Also generate a graph with all possible edges for now
         rows, cols = np.where(total_matrix == 1)
         all_edges = zip(rows.tolist(), cols.tolist())
 
@@ -190,5 +192,8 @@ class Configuration(object):
 
             while line != '':
                 parameter, value = line.split('=')
-                self.parameters[parameter] = value
+                if value.isdigit():
+                    self.parameters[parameter] = int(value)
+                else:
+                    self.parameters[parameter] = float(value)
                 line = f.readline().rstrip("\n")

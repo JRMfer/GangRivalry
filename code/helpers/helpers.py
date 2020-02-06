@@ -58,7 +58,7 @@ def accuracy_graph(model):
     true_pos, true_neg = 0, 0
     false_pos, false_neg = 0, 0
     graph_edges = set(model.gr.edges)
-    all_edges = set(model.config.all_graph.edges)
+    all_edges = set(model.config.all_gr.edges)
     observed_graph_edges = set(model.config.observed_gr.edges)
 
     non_existing_edges = all_edges ^ observed_graph_edges
@@ -115,6 +115,7 @@ def shape_metrics(model):
         centrality += max_degree - degree
 
     variance_degree /= model.config.total_gangs
-    centrality /= ((model.config.total_gangs - 1) * (model.total_gangs - 2))
+    centrality /= ((model.config.total_gangs - 1) * 
+                    (model.config.total_gangs - 2))
 
     return graph_density, variance_degree, centrality
