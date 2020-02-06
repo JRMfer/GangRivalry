@@ -3,8 +3,7 @@ from mesa.space import ContinuousSpace
 from mesa.datacollection import DataCollector
 from .agents import Gang, GangMember_SBLN
 from .schedule import OneRandomActivation
-from code.helpers.helpers import (get_total_interactions, accuracy_graph,
-                                  shape_metrics, get_rivalry_matrix)
+from code.helpers.helpers import accuracy_graph, shape_metrics
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -43,10 +42,8 @@ class GangRivalry(Model):
         self.create_graph()
         self.datacollector = DataCollector(
             model_reporters={
-                "Interaction": get_total_interactions,
                 "Accuracy": accuracy_graph,
-                "Shape": shape_metrics,
-                "Rivalry": get_rivalry_matrix},
+                "Shape": shape_metrics},
 
             agent_reporters={"Agent interaction": "interactions"}
         )
@@ -114,30 +111,3 @@ class GangRivalry(Model):
                 self.datacollector.collect(self)
 
         return self.rivalry_matrix
-
-# if __name__ == "__main__":
-#     road_dens = load_road_density(ROAD_TXT)
-#     road_dens = road_dens[::-1]
-#     areas = load_areas(AREAS, BOUNDS)
-#     height, width = road_dens.shape[0] - 1, road_dens.shape[1] - 1
-#     gangs = load_gangs(GANG_INFO)
-#     boundaries = load_region_matrix(REGIONS)
-#     observed_graph, all_gr = load_connectivity_matrix(OBSERVED_NETWORK, gangs)
-#     model = GangRivalry(observed_graph, all_gr, boundaries, road_dens, areas, 
-#                         xmax=width, ymax=height,gang_info=gangs)
-
-
-#     folder = "simulations_SBLN/"
-#     os.makedirs(folder, exist_ok=True)
-#     model.run_model(step_count=2000000)
-#     data = model.datacollector.get_model_vars_dataframe()
-#     data.to_csv(folder + "run6.csv")
-#     print(data)
-#     # start = time.time()
-#     # model.run_model(step_count=10000)
-#     # print("Model ran in {} seconds".format(time.time() - start))
-
-#     # data = model.datacollector.get_model_vars_dataframe()
-#     # print(data.head())
-#     # data.plot()
-#     # plt.show()

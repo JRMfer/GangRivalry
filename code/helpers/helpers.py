@@ -4,6 +4,15 @@ from math import sqrt
 from matplotlib import pyplot as plt
 from code.classes.agents import Gang
 
+def is_correct_integer(s, lower_bound, upper_bound):
+    try:
+        int(s)
+    except ValueError:
+        return False
+
+    temp = int(s)
+    return temp > lower_bound and temp <= upper_bound 
+
 def random_gangs(n, width, height):
     """
     Generates Gangs of fixed size 30 randomly located 
