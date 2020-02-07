@@ -35,7 +35,7 @@ if __name__ == "__main__":
     if not is_correct_integer(num):
         sys.exit("Start id number should be an integer.")
 
-    simulations, iterations = int(simulations), int(iterations)
+    simulations, iterations, num = int(simulations), int(iterations), int(num)
     directory = os.path.dirname(os.path.realpath(__file__))
     data_directory = os.path.join(directory, "data")
     
