@@ -16,7 +16,7 @@ if __name__ == "__main__":
                     "user_name start_id_number")
 
     _, algorithm, simulations, iterations, input_data, user_name, num = sys.argv
-
+    
     algorithms = ["BM", "SBLN", "GRAV"]
     if algorithm not in algorithms:
         sys.exit("Algorithm not found. \nChoices: BM/SBLN/GRAV")
@@ -31,6 +31,9 @@ if __name__ == "__main__":
     
     if not os.path.exists(input_data):
         sys.exit("Could not find input data (txt file)")
+
+    if not is_correct_integer(num):
+        sys.exit("Start id number should be an integer.")
 
     simulations, iterations = int(simulations), int(iterations)
     directory = os.path.dirname(os.path.realpath(__file__))
@@ -47,8 +50,8 @@ if __name__ == "__main__":
     for sim in tqdm(range(simulations)):
         model = GangRivalry(config, algorithm)
         rivalry_mat = model.run_model(step_count=iterations)
-        np.save(os.path.join(results_algorithms, f"rivalry_matrix_sim{sim}"), 
-                    rivalry_mat)
+        np.save(os.path.join(results_algorithms, 
+                    f"rivalry_matrix_sim{num + sim}"), rivalry_mat)
         data = model.datacollector.get_model_vars_dataframe()
         data.to_csv(os.path.join(results_algorithms,
-                                 f"datacollector_sim{sim}.csv"))
+                                 f"datacollector_sim{num + sim}.csv"))
