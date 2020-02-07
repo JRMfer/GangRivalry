@@ -8,7 +8,7 @@
 *.csv
 
 # Ignore all .xlsx files
-# *.xlsx
+*.xlsx
 
 # Ignore all .zip files
 *.zip

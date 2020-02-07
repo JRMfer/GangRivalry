@@ -33,7 +33,8 @@ if __name__ == "__main__":
     simulations, iterations = int(simulations), int(iterations)
 
     if not is_correct_integer(iter_check, 0, iterations):
-        sys.exit("Iterations check should be positive but smaller than max amount of iterations")
+        sys.exit("Iterations check should be positive but smaller " \
+                    "than max amount of iterations")
     
     if not os.path.exists(input_data):
         sys.exit("Could not find input data (txt file)")
@@ -42,7 +43,7 @@ if __name__ == "__main__":
         sys.exit("Start id number should be an integer.")
 
     iter_check, num = int(iter_check), int(num)
-    directory = os.path.dirname(os.path.realpath(__file__))
+    directory = os.getcwd()
     data_directory = os.path.join(directory, "data")
     
     results_folder = os.path.join(directory, f"results_{user_name}")
