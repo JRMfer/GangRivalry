@@ -1,6 +1,6 @@
 AREAS=area_no_boundaries.jpg
 BOUNDS=bounds.txt
-ROAD_TXT=hollenbeckRoadDensity.txt
+ROAD_TXT=HollenbeckRoadDensity.txt
 GANG_INFO=gang_information_correct.csv
 OBSERVED_NETWORK=Connectivity_matrix_observed_network.xlsx
 COLORS=colors.txt
