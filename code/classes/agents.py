@@ -7,8 +7,8 @@
 
 import math
 import random
+import numpy as np
 from mesa import Agent
-from scipy.stats import norm
 
 class Gang(object):
     def __init__(self, number, coords, size):
@@ -40,19 +40,22 @@ class BM(Agent):
 
         while True:
             x, y = self.pos
-            x1 = x + norm.rvs(size=1)
-            x2 = y + norm.rvs(size=1)
+            x1 = x + np.random.normal()
+            x2 = y + np.random.normal()
             new_pos = (x1, x2)
-            new_pos_int = (int(x1), int(x2))
-            accepting_chance = random.uniform(0, 1)
-            # get region is not a function yet; keep in mind
-            old_region = self.model.config.areas[(int(x), int(y))]
-            new_region = self.model.config.areas[new_pos_int]
-            borders_crossed = self.model.config.boundaries[old_region, 
-                                                            new_region]
 
-            if self.beta ** borders_crossed > accepting_chance:
-                if not self.model.area.out_of_bounds(new_pos):
+            if not self.model.area.out_of_bounds(new_pos):
+                new_pos_int = (int(x1), int(x2))
+                new_region = self.model.config.areas[new_pos_int]
+
+                if new_region == 24:
+                    continue
+
+                old_region = self.model.config.areas[(int(x), int(y))]
+                borders_crossed = self.model.config.boundaries[old_region, 
+                                                                new_region]
+
+                if random.uniform(0, 1) < self.beta ** borders_crossed:
                     self.model.area.move_agent(self, new_pos)
 
                 break
@@ -60,7 +63,6 @@ class BM(Agent):
 class GangMemberB(BM):
     def __init__(self, unique_id, model, pos, number, beta, vision):
         super().__init__(unique_id, model, pos, number, beta)
-        self.interactions = 0
         self.vision = vision
 
     def step(self):
@@ -209,7 +211,6 @@ class GangMember_SBLN(SBLN):
                  min_jump, weight_home, bounded_pareto, kappa, vision, beta):
         super().__init__(unique_id, model, pos, number,
                          min_jump, weight_home, bounded_pareto, kappa, beta)
-        self.interactions = 0
         self.vision = vision
 
     def step(self):
@@ -230,7 +231,6 @@ class GangMember_SBLN(SBLN):
 
         for agent in poss_agents:
             if self.number != agent.number:
-                self.interactions += 1
                 self.model.update_rivalry(self, agent)
 
 
@@ -343,7 +343,6 @@ class GangMemberG(GRAV):
                  min_jump, weight_home, bounded_pareto, kappa, vision, beta):
         super().__init__(unique_id, model, pos, gang,
                          min_jump, weight_home, bounded_pareto, kappa, beta)
-        self.interactions = 0
         self.vision = vision
 
     def step(self):
@@ -364,5 +363,4 @@ class GangMemberG(GRAV):
 
         for agent in poss_agents:
             if self.number != agent.number:
-                self.interactions += 1
                 self.model.update_rivalry(self, agent)

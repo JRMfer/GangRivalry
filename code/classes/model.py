@@ -14,7 +14,7 @@ class GangRivalry(Model):
     """
     """
 
-    def __init__(self, config, algorithm):
+    def __init__(self, config, algorithm, iter_check):
         super().__init__()
 
         self.config = config
@@ -31,6 +31,7 @@ class GangRivalry(Model):
         self.area = ContinuousSpace(self.width, self.height, False)
         self.threshold = self.config.parameters["threshold"]
         self.algorithm = algorithm
+        self.iter_check = iter_check
 
         gang_sizes = [gang.size for gang in self.config.gang_info.values()]
         self.min_gang = min(gang_sizes)
@@ -51,9 +52,7 @@ class GangRivalry(Model):
         self.datacollector = DataCollector(
             model_reporters={
                 "Accuracy": accuracy_graph,
-                "Shape": shape_metrics},
-
-            agent_reporters={"Agent interaction": "interactions"}
+                "Shape": shape_metrics}
         )
         self.running = True
         self.datacollector.collect(self)
@@ -123,7 +122,7 @@ class GangRivalry(Model):
         for i in tqdm(range(step_count)):     
             self.step()
 
-            if i % 1000 == 0:
+            if i % self.iter_check == 0:
                 self.make_graph()
                 self.datacollector.collect(self)
 

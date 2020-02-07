@@ -10,12 +10,13 @@ from code.helpers.helpers import get_filenames, is_correct_integer
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 7:
+    if len(sys.argv) != 8:
         sys.exit("Correct usage: python main.py algorithm " \
-                    "simulations iterations input_data.txt " \
+                    "simulations iterations iterations_check " \
+                    "input_data.txt " \
                     "user_name start_id_number")
 
-    _, algorithm, simulations, iterations, input_data, user_name, num = sys.argv
+    _, algorithm, simulations, iterations, iter_check, input_data, user_name, num = sys.argv
     
     algorithms = ["BM", "SBLN", "GRAV"]
     if algorithm not in algorithms:
@@ -28,6 +29,11 @@ if __name__ == "__main__":
     if not is_correct_integer(iterations, 0, 1e7):
         sys.exit("The amount of iterations should be an integer " \
                     "between 0 and 10 million")
+
+    simulations, iterations = int(simulations), int(iterations)
+
+    if not is_correct_integer(iter_check, 0, iterations):
+        sys.exit("Iterations check should be positive but smaller than max amount of iterations")
     
     if not os.path.exists(input_data):
         sys.exit("Could not find input data (txt file)")
@@ -35,7 +41,7 @@ if __name__ == "__main__":
     if not is_correct_integer(num):
         sys.exit("Start id number should be an integer.")
 
-    simulations, iterations, num = int(simulations), int(iterations), int(num)
+    iter_check, num = int(iter_check), int(num)
     directory = os.path.dirname(os.path.realpath(__file__))
     data_directory = os.path.join(directory, "data")
     
@@ -48,7 +54,7 @@ if __name__ == "__main__":
 
     # run simulations for given walking method
     for sim in tqdm(range(simulations)):
-        model = GangRivalry(config, algorithm)
+        model = GangRivalry(config, algorithm, iter_check)
         rivalry_mat = model.run_model(step_count=iterations)
         np.save(os.path.join(results_algorithms, 
                     f"rivalry_matrix_sim{num + sim}"), rivalry_mat)
