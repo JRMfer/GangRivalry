@@ -1,10 +1,10 @@
 import os
 import numpy as np
-from math import sqrt
+from math import sqrt, inf
 from matplotlib import pyplot as plt
 from code.classes.agents import Gang
 
-def is_correct_integer(s, lower_bound, upper_bound):
+def is_correct_integer(s, lower_bound=-inf, upper_bound=inf):
     try:
         int(s)
     except ValueError:

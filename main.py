@@ -10,12 +10,12 @@ from code.helpers.helpers import get_filenames, is_correct_integer
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 7:
         sys.exit("Correct usage: python main.py algorithm " \
                     "simulations iterations input_data.txt " \
-                    "user_name")
+                    "user_name start_id_number")
 
-    _, algorithm, simulations, iterations, input_data, user_name = sys.argv
+    _, algorithm, simulations, iterations, input_data, user_name, num = sys.argv
 
     algorithms = ["BM", "SBLN", "GRAV"]
     if algorithm not in algorithms:
@@ -42,10 +42,10 @@ if __name__ == "__main__":
 
     filenames = get_filenames(data_directory, input_data)
     config = Configuration(filenames)
-    model = GangRivalry(config, algorithm)
 
     # run simulations for given walking method
     for sim in tqdm(range(simulations)):
+        model = GangRivalry(config, algorithm)
         rivalry_mat = model.run_model(step_count=iterations)
         np.save(os.path.join(results_algorithms, f"rivalry_matrix_sim{sim}"), 
                     rivalry_mat)

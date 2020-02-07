@@ -128,3 +128,6 @@ class GangRivalry(Model):
                 self.datacollector.collect(self)
 
         return self.rivalry_matrix
+
+    def reset_model(self):
+        pass
