@@ -43,7 +43,7 @@ if __name__ == "__main__":
         sys.exit("Start id number should be an integer.")
 
     iter_check, num = int(iter_check), int(num)
-    directory = os.getcwd()
+    directory = os.path.dirname(os.path.realpath(__file__))
     data_directory = os.path.join(directory, "data")
     
     results_folder = os.path.join(directory, f"results_{user_name}")
