@@ -1,7 +1,7 @@
 from mesa import Model
 from mesa.space import ContinuousSpace
 from mesa.datacollection import DataCollector
-from .agents import Gang, GangMember_SBLN
+from .agents import Gang, GangMemberB, GangMember_SBLN, GangMemberG
 from .schedule import OneRandomActivation
 from code.helpers.helpers import accuracy_graph, shape_metrics
 
@@ -31,6 +31,14 @@ class GangRivalry(Model):
         self.area = ContinuousSpace(self.width, self.height, False)
         self.threshold = self.config.parameters["threshold"]
         self.algorithm = algorithm
+
+        gang_sizes = [gang.size for gang in self.config.gang_info.values()]
+        self.min_gang = min(gang_sizes)
+        self.max_gang = max(gang_sizes)
+        self.norm_gang_size = [
+            (i - self.min_gang) / (self.max_gang - self.min_gang) 
+            for i in gang_sizes
+            ]
 
         self.schedule = OneRandomActivation(self)
         self.init_population()
@@ -62,12 +70,21 @@ class GangRivalry(Model):
         """
         agent = None
 
-        if self.algorithm == "SBLN":
-            x, y = pos
+        if self.algorithm == "BM":
+            agent = GangMemberB(self.next_id(), self, pos, 
+                                name, self.beta, self.vision)
+
+        elif self.algorithm == "SBLN":
             agent = GangMember_SBLN(self.next_id(), self, pos, name, 
                                     self.min_jump, self.weight_home, 
                                     self.bounded_pareto, self.kappa, 
                                     self.vision, self.beta)
+        
+        elif self.algorithm == "GRAV":
+            agent = GangMemberG(self.next_id(), self, pos, name, 
+                                self.min_jump, self.weight_home, 
+                                self.bounded_pareto, self.kappa, 
+                                self.vision, self.beta)
 
         self.area.place_agent(agent, pos)
         self.schedule.add(agent)

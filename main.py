@@ -2,7 +2,7 @@
 import os
 import sys
 import numpy as np
-import pandas as pd
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 from code.classes.configuration import Configuration
 from code.classes.model import GangRivalry
@@ -17,9 +17,9 @@ if __name__ == "__main__":
 
     _, algorithm, simulations, iterations, input_data, user_name = sys.argv
 
-    algorithms = ["BM", "SBLN", "gravity"]
+    algorithms = ["BM", "SBLN", "GRAV"]
     if algorithm not in algorithms:
-        sys.exit("Algorithm not found. \nChoices: BM/SBLN/gravity")
+        sys.exit("Algorithm not found. \nChoices: BM/SBLN/GRAV")
 
     if not is_correct_integer(simulations, 0, 1000):
         sys.exit("The amount of simulations should be an integer " \
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     model = GangRivalry(config, algorithm)
 
     # run simulations for given walking method
-    for sim in range(simulations):
+    for sim in tqdm(range(simulations)):
         rivalry_mat = model.run_model(step_count=iterations)
         np.save(os.path.join(results_algorithms, f"rivalry_matrix_sim{sim}"), 
                     rivalry_mat)
