@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 from code.classes.configuration import Configuration
 from code.classes.model import GangRivalry
 from code.helpers.helpers import (
-    get_filenames, is_correct_integer, plot_observed_network, plot_networks
+    get_filenames, is_correct_integer, plot_network, plot_networks,
+    plot_accuracy
     )
 
 if __name__ == "__main__":
@@ -64,5 +65,8 @@ if __name__ == "__main__":
     #     data = model.datacollector.get_model_vars_dataframe()
     #     data.to_csv(os.path.join(results_algorithms,
     #                              f"datacollector_sim{num + sim}.csv"))
-    plot_observed_network(config, user_name)
+    plot_accuracy(algorithm, 4, user_name)
+    plot_network(config.road_dens, config.observed_gr, user_name, 
+                    "observed_network")
+    plot_network(config.road_dens, config.gtg_gr, user_name, "GTG")
     plot_networks(algorithm, 4, config, "JULIEN", config.parameters["threshold"])
