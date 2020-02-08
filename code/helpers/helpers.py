@@ -94,8 +94,7 @@ def shape_metrics(model):
     degrees = [degree[1] for degree in model.gr.degree]
     total_degree = sum(degrees)
     ave_degree = total_degree / model.config.total_gangs
-    graph_density = total_degree / (model.config.total_gangs * 
-                                        (model.config.total_gangs - 1))
+    graph_density = nx.density(model.gr)
     max_degree = max(degrees)
 
     variance_degree, centrality = 0, 0
@@ -112,6 +111,20 @@ def shape_metrics(model):
 def plot_accuracy(filenames):
     pass
 
+def plot_observed_network(config, user_name):
+    path = os.path.join(f"results_{user_name}", "observed_network.pdf")
+    width = config.road_dens.shape[1] - 1
+    height = config.road_dens.shape[0] - 1
+
+    pos = nx.get_node_attributes(config.observed_gr, "pos")
+    d = dict(config.observed_gr.degree)
+    nx.draw(config.observed_gr, pos, node_size=[(v + 1) * 5 for v in d.values()])
+    plt.xlim(0, width)
+    plt.ylim(0, height)
+    plt.title("Observed network")
+    plt.savefig(path, dpi=300)
+    plt.close()
+
 def plot_networks(algorithm, simulations, config, user_name, threshold):
 
     alg_path = os.path.join(f"results_{user_name}", algorithm)
@@ -119,11 +132,14 @@ def plot_networks(algorithm, simulations, config, user_name, threshold):
     matrices_sim = [np.load(path + str(sim) + ".npy") 
                     for sim in range(simulations)]
 
+    width = config.road_dens.shape[1] - 1
+    height = config.road_dens.shape[0] - 1
+
     shape = len(config.gang_info)
     for mat, matrix in enumerate(matrices_sim):
         graph = nx.Graph()
         for gang in config.gang_info.values():
-            graph.add_node(gang.number, pos=gang.coords, color="black")
+            graph.add_node(gang.number, pos=gang.coords)
 
         for i in range(shape):
             total_interactions = matrix[i, :].sum()
@@ -132,9 +148,18 @@ def plot_networks(algorithm, simulations, config, user_name, threshold):
                     rival_strength = matrix[i][j] / total_interactions
                     if rival_strength > threshold:
                         graph.add_edge(i, j, color=config.colors[i])
-
+        
         pos = nx.get_node_attributes(graph, "pos")
-        nx.draw(graph, pos)
+        d = dict(graph.degree)
+        nx.draw(graph, pos, node_size=[(v + 1) * 5 for v in d.values()])
+        if algorithm == "GRAV":
+            plt.title("Network Gravity model")
+        elif algorithm == "SBLN":
+            plt.title("Network Semi-Biased Levy walk")
+        elif algorithm == "BM":
+            plt.title("Network Brownian Motion")
+        plt.xlim(0, width)
+        plt.ylim(0, height)
         plt.savefig(os.path.join(alg_path, f"network_sim{mat}.pdf"), dpi=300)
         plt.close()
     

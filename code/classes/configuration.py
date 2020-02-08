@@ -35,6 +35,9 @@ class Configuration(object):
                     self.gang_info
                     )
 
+        self.gtg_gr = nx.Graph()
+        self.load_gtg_matrix(filenames["GTG_NETWORK"], self.gang_info)
+
         self.colors = []
         self.load_colors(filenames["COLORS"])
         self.colors = ["#{:02x}{:02x}{:02x}"
@@ -157,8 +160,7 @@ class Configuration(object):
 
         # Add nodes to graph
         for k, gang in gangs.items():
-            self.observed_gr.add_node(k, pos=gang.coords)
-            
+            self.observed_gr.add_node(k, pos=gang.coords)          
         self.observed_gr.add_edges_from(edges)
 
         # # Also generate a graph with all possible edges for now
@@ -168,6 +170,18 @@ class Configuration(object):
         for k, gang in gangs.items():
             self.all_gr.add_node(k, pos=gang.coords)
         self.all_gr.add_edges_from(all_edges)
+
+    def load_gtg_matrix(self, filename, gangs):
+        matrix = pd.read_excel(filename)
+        matrix = matrix.values
+        total_matrix = np.ones((matrix.shape[0], matrix.shape[1]))
+        rows, cols = np.where(matrix == 1)
+        edges = zip(rows.tolist(), cols.tolist())
+
+        # Add nodes to graph
+        for k, gang in gangs.items():
+            self.gtg_gr.add_node(k, pos=gang.coords)
+        self.gtg_gr.add_edges_from(edges)
 
     def load_colors(self, filename):
         """

@@ -37,8 +37,8 @@ class GangRivalry(Model):
         self.min_gang = min(gang_sizes)
         self.max_gang = max(gang_sizes)
         self.norm_gang_size = [
-            (i - self.min_gang) / (self.max_gang - self.min_gang) 
-            for i in gang_sizes
+            (size - self.min_gang) / (self.max_gang - self.min_gang) 
+            for size in gang_sizes
             ]
 
         self.schedule = OneRandomActivation(self)

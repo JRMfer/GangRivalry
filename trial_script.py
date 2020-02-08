@@ -13,4 +13,4 @@ if __name__ == "__main__":
     data_directory = os.path.join(directory, "data")
     filenames = get_filenames(data_directory, input_data)
     config = Configuration(filenames)
-    plot_networks("GRAV", 1, config, "JULIEN", 0.04)
+    plot_networks("GRAV", 1, config, "JULIEN", config.parameters["threshold"])

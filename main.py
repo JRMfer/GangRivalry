@@ -6,7 +6,9 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from code.classes.configuration import Configuration
 from code.classes.model import GangRivalry
-from code.helpers.helpers import get_filenames, is_correct_integer
+from code.helpers.helpers import (
+    get_filenames, is_correct_integer, plot_observed_network, plot_networks
+    )
 
 if __name__ == "__main__":
 
@@ -53,12 +55,14 @@ if __name__ == "__main__":
     filenames = get_filenames(data_directory, input_data)
     config = Configuration(filenames)
 
-    # run simulations for given walking method
-    for sim in tqdm(range(simulations)):
-        model = GangRivalry(config, algorithm, iter_check)
-        rivalry_mat = model.run_model(step_count=iterations)
-        np.save(os.path.join(results_algorithms, 
-                    f"rivalry_matrix_sim{num + sim}"), rivalry_mat)
-        data = model.datacollector.get_model_vars_dataframe()
-        data.to_csv(os.path.join(results_algorithms,
-                                 f"datacollector_sim{num + sim}.csv"))
+    # # run simulations for given walking method
+    # for sim in tqdm(range(simulations)):
+    #     model = GangRivalry(config, algorithm, iter_check)
+    #     rivalry_mat = model.run_model(step_count=iterations)
+    #     np.save(os.path.join(results_algorithms, 
+    #                 f"rivalry_matrix_sim{num + sim}"), rivalry_mat)
+    #     data = model.datacollector.get_model_vars_dataframe()
+    #     data.to_csv(os.path.join(results_algorithms,
+    #                              f"datacollector_sim{num + sim}.csv"))
+    plot_observed_network(config, user_name)
+    plot_networks(algorithm, 4, config, "JULIEN", config.parameters["threshold"])
