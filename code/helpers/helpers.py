@@ -2,7 +2,7 @@ import os
 import numpy as np
 from math import sqrt, inf
 from matplotlib import pyplot as plt
-from code.classes.agents import Gang
+import networkx as nx
 
 def is_correct_integer(s, lower_bound=-inf, upper_bound=inf):
     try:
@@ -11,27 +11,7 @@ def is_correct_integer(s, lower_bound=-inf, upper_bound=inf):
         return False
 
     temp = int(s)
-    return temp > lower_bound and temp <= upper_bound 
-
-def random_gangs(n, width, height):
-    """
-    Generates Gangs of fixed size 30 randomly located 
-    inside the area.
-
-    Input: 
-        n = amoount of gangs, 
-        width = width of area,
-        height = height of area
-    output:
-        dictionary with keys an integer pointing to 
-        a Gang object
-    """
-
-    gangs, size = {}, 30
-    for i in range(n):
-        coords = (np.random.randint(0, width), np.random.randint(0, height))
-        gangs[i] = Gang(i, coords, size)
-    return gangs
+    return temp > lower_bound and temp <= upper_bound
 
 def get_filenames(data_directory, filename):
     """
@@ -128,3 +108,33 @@ def shape_metrics(model):
                     (model.config.total_gangs - 2))
 
     return graph_density, variance_degree, centrality
+
+def plot_accuracy(filenames):
+    pass
+
+def plot_networks(algorithm, simulations, config, user_name, threshold):
+
+    alg_path = os.path.join(f"results_{user_name}", algorithm)
+    path = os.path.join(alg_path, "rivalry_matrix_sim")
+    matrices_sim = [np.load(path + str(sim) + ".npy") 
+                    for sim in range(simulations)]
+
+    shape = len(config.gang_info)
+    for mat, matrix in enumerate(matrices_sim):
+        graph = nx.Graph()
+        for gang in config.gang_info.values():
+            graph.add_node(gang.number, pos=gang.coords, color="black")
+
+        for i in range(shape):
+            total_interactions = matrix[i, :].sum()
+            for j in range(shape):
+                if total_interactions:
+                    rival_strength = matrix[i][j] / total_interactions
+                    if rival_strength > threshold:
+                        graph.add_edge(i, j, color=config.colors[i])
+
+        pos = nx.get_node_attributes(graph, "pos")
+        nx.draw(graph, pos)
+        plt.savefig(os.path.join(alg_path, f"network_sim{mat}.pdf"), dpi=300)
+        plt.close()
+    
