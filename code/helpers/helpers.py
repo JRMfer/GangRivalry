@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import pandas as pd
 from math import sqrt, inf
@@ -13,6 +14,33 @@ def is_correct_integer(s, lower_bound=-inf, upper_bound=inf):
 
     temp = int(s)
     return temp > lower_bound and temp <= upper_bound
+
+def check_cmd_args(algorithm, simulations, iterations, 
+                    iter_check, input_data, num):
+
+    algorithms = ["BM", "SBLN", "GRAV"]
+    if algorithm not in algorithms:
+        sys.exit("Algorithm not found. \nChoices: BM/SBLN/GRAV")
+
+    if not is_correct_integer(simulations, 0, 1000):
+        sys.exit("The amount of simulations should be an integer "
+                 "between 0 and 1000")
+
+    if not is_correct_integer(iterations, 0, 1e7):
+        sys.exit("The amount of iterations should be an integer "
+                 "between 0 and 10 million")
+
+    simulations, iterations = int(simulations), int(iterations)
+
+    if not is_correct_integer(iter_check, 0, iterations):
+        sys.exit("Iterations check should be positive but smaller "
+                 "than max amount of iterations")
+
+    if not os.path.exists(input_data):
+        sys.exit("Could not find input data (txt file)")
+
+    if not is_correct_integer(num):
+        sys.exit("Start id number should be an integer.")
 
 def get_filenames(data_directory, filename):
     """
