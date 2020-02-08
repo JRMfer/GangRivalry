@@ -4,36 +4,41 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import networkx as nx
 
-def plot_accuracy(algorithm, simulations, user_name):
+def plot_metrics(algorithm, simulations, user_name):
     alg_path = os.path.join(f"results_{user_name}", algorithm)
     path = os.path.join(alg_path, "datacollector_sim")
     dfs = [pd.read_csv(path + str(sim) + ".csv") for sim in range(simulations)]
     size = dfs[0]["Accuracy"].size
-    all_accuracies = []
+    all_accuracies, all_shape = [], []
     
     for variable in range(3):
-        var_accuracy = [[] for _ in range(size)]
+        var_accuracy, var_shape = [[] * size], [[] * size]
         for df in dfs:
             for obs in range(size):
                 accuracy = df[["Accuracy"]].iloc[obs][0]
+                shapes = df[["Shape"]].iloc[obs][0]
                 acc_preproccesed = accuracy.strip("(),").split(",")
+                shapes_preproccesed = shapes.strip("(),").split(",")
                 number = float(acc_preproccesed[variable])
-                var_accuracy[obs].append(number)
-        all_accuracies.append(var_accuracy)
+                number = float(shapes_preproccesed[variable])
+                var_accuracy[obs].append(number), var_shape[obs].append(number)
+        all_accuracies.append(var_accuracy), all_shape.append(var_shape)
 
-    ave_accuracies = [[], [], []]
-    stds_accuracies = [[], [], []]
+    ave_accuracies, ave_shapes = [[], [], []], [[], [], []]
+    stds_accuracies, stds_shapes = [[], [], []], [[], [], []]
     for variable in range(3):
-        for acc in all_accuracies[variable]:
+        for acc, s in zip(all_accuracies[variable], all_shape[variable]):
             ave_accuracies[variable].append(np.mean(acc))
+            ave_shapes[variable].append(np.mean(s))
             stds_accuracies[variable].append(np.std(acc))
+            stds_shapes[variable].append(np.std(s))
 
     variables = ["Accuracy", "F1", "Mathews Correlation Coeffcient"]
-    for i in range(3):
+    for i, acc in enumerate(ave_accuracies):
         plt.figure()
-        x = [0.01 * i for i in range(len(ave_accuracies[i]))]
+        x = [0.01 * i for i in range(len(acc))]
 
-        plt.plot(x, ave_accuracies[i], color="darkblue")
+        plt.plot(x, acc, color="darkblue")
         if algorithm == "SBLN":
             plt.title("Mean accuracy over all tests for Levy based walk")
             plt.xlabel("iteration number (10^5)")
@@ -48,9 +53,35 @@ def plot_accuracy(algorithm, simulations, user_name):
 
         plt.ylabel(variables[i])
 
-        plt.errorbar(x, ave_accuracies[i], yerr=stds_accuracies[i], alpha=0.1,
+        plt.errorbar(x, acc, yerr=stds_accuracies[i], alpha=0.1,
                     color="cornflowerblue")
         plt.savefig(os.path.join(alg_path, f"plot_{algorithm}_{variables[i]}.pdf"), dpi=300)
+        plt.close()
+
+    variables = ["Density", "Variance_degree", "Centrality"]
+    for i, shape_metric in enumerate(ave_shapes):
+        plt.figure()
+        x = [0.01 * i for i in range(len(shape))]
+
+        plt.plot(x, shape_metric, color="darkblue")
+        if algorithm == "SBLN":
+            plt.title("Mean accuracy over all tests for Levy based walk")
+            plt.xlabel("iteration number (10^5)")
+
+        elif algorithm == "GRAV":
+            plt.title("Mean accuracy over all tests for gravitywalk")
+            plt.xlabel("iteration number (10^5)")
+
+        elif algorithm == "BM":
+            plt.title("Mean accuracy over all tests for Brownian Motion")
+            plt.xlabel("iteration number (10^6)")
+
+        plt.ylabel(variables[i])
+
+        plt.errorbar(x, shape_metric, yerr=stds_shapes[i], alpha=0.1,
+                     color="cornflowerblue")
+        plt.savefig(os.path.join(
+            alg_path, f"plot_{algorithm}_{variables[i]}.pdf"), dpi=300)
         plt.close()
 
 

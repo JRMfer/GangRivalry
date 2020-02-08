@@ -8,7 +8,7 @@ from code.classes.configuration import Configuration
 from code.classes.model import GangRivalry
 from code.helpers.helpers import get_filenames, is_correct_integer
 from code.visualization.visualizer import (
-    plot_network, plot_networks, plot_accuracy
+    plot_network, plot_networks, plot_metrics
     )
 
 if __name__ == "__main__":
@@ -65,8 +65,8 @@ if __name__ == "__main__":
     #     data = model.datacollector.get_model_vars_dataframe()
     #     data.to_csv(os.path.join(results_algorithms,
     #                              f"datacollector_sim{num + sim}.csv"))
-    plot_accuracy(algorithm, 2, user_name)
+    plot_metrics(algorithm, 13, user_name)
     plot_network(config.road_dens, config.observed_gr, user_name, 
                     "observed_network")
     plot_network(config.road_dens, config.gtg_gr, user_name, "GTG")
-    plot_networks(algorithm, 2, config, user_name, config.parameters["threshold"])
+    plot_networks(algorithm, 13, config, user_name, config.parameters["threshold"])

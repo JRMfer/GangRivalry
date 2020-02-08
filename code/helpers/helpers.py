@@ -72,22 +72,6 @@ def accuracy_graph(model):
 
     return ACC, F_1, MCC
 
-def plot_simulation(model):
-    """
-    """
-
-    fig = plt.figure()
-    plt.xlim(0, model.width)
-    plt.ylim(0, model.height)
-    for agent in model.schedule.agents:
-        x, y = agent.pos
-        plt.scatter(x, y, color=model.config.colors[agent.number], s=2)
-
-    folder = "../results/"
-    os.makedirs(folder, exist_ok=True)
-    fig.savefig(folder + "step" + str(model.schedule.time) + ".png")
-    plt.close()
-
 def shape_metrics(model):
     """
     """
