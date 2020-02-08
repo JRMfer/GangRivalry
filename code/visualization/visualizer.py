@@ -12,7 +12,8 @@ def plot_metrics(algorithm, simulations, user_name):
     all_accuracies, all_shape = [], []
     
     for variable in range(3):
-        var_accuracy, var_shape = [[] * size], [[] * size]
+        var_accuracy = [[] for _ in range(size)]
+        var_shape = [[] for _ in range(size)]
         for df in dfs:
             for obs in range(size):
                 accuracy = df[["Accuracy"]].iloc[obs][0]
@@ -61,19 +62,19 @@ def plot_metrics(algorithm, simulations, user_name):
     variables = ["Density", "Variance_degree", "Centrality"]
     for i, shape_metric in enumerate(ave_shapes):
         plt.figure()
-        x = [0.01 * i for i in range(len(shape))]
+        x = [0.01 * i for i in range(len(shape_metric))]
 
         plt.plot(x, shape_metric, color="darkblue")
         if algorithm == "SBLN":
-            plt.title("Mean accuracy over all tests for Levy based walk")
+            plt.title(f"Mean {variables[i]} over all tests for Levy based walk")
             plt.xlabel("iteration number (10^5)")
 
         elif algorithm == "GRAV":
-            plt.title("Mean accuracy over all tests for gravitywalk")
+            plt.title(f"Mean {variables[i]} over all tests for gravitywalk")
             plt.xlabel("iteration number (10^5)")
 
         elif algorithm == "BM":
-            plt.title("Mean accuracy over all tests for Brownian Motion")
+            plt.title(f"Mean {variables[i]} over all tests for Brownian Motion")
             plt.xlabel("iteration number (10^6)")
 
         plt.ylabel(variables[i])
