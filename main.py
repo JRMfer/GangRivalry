@@ -6,9 +6,9 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from code.classes.configuration import Configuration
 from code.classes.model import GangRivalry
-from code.helpers.helpers import (
-    get_filenames, is_correct_integer, plot_network, plot_networks,
-    plot_accuracy
+from code.helpers.helpers import get_filenames, is_correct_integer
+from code.visualization.visualizer import (
+    plot_network, plot_networks, plot_accuracy
     )
 
 if __name__ == "__main__":
