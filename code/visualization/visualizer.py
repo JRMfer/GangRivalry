@@ -21,8 +21,8 @@ def plot_metrics(algorithm, simulations, user_name):
                 acc_preproccesed = accuracy.strip("(),").split(",")
                 shapes_preproccesed = shapes.strip("(),").split(",")
                 number = float(acc_preproccesed[variable])
-                number = float(shapes_preproccesed[variable])
-                var_accuracy[obs].append(number), var_shape[obs].append(number)
+                number2 = float(shapes_preproccesed[variable])
+                var_accuracy[obs].append(number), var_shape[obs].append(number2)
         all_accuracies.append(var_accuracy), all_shape.append(var_shape)
 
     ave_accuracies, ave_shapes = [[], [], []], [[], [], []]
@@ -34,7 +34,7 @@ def plot_metrics(algorithm, simulations, user_name):
             stds_accuracies[variable].append(np.std(acc))
             stds_shapes[variable].append(np.std(s))
 
-    variables = ["Accuracy", "F1", "Mathews Correlation Coeffcient"]
+    variables = ["Accuracy", "F1", "Mathews_Correlation_Coeffcient"]
     for i, acc in enumerate(ave_accuracies):
         plt.figure()
         x = [0.01 * i for i in range(len(acc))]
