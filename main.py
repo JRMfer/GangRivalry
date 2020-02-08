@@ -65,8 +65,8 @@ if __name__ == "__main__":
     #     data = model.datacollector.get_model_vars_dataframe()
     #     data.to_csv(os.path.join(results_algorithms,
     #                              f"datacollector_sim{num + sim}.csv"))
-    plot_accuracy(algorithm, 4, user_name)
+    plot_accuracy(algorithm, 13, user_name)
     plot_network(config.road_dens, config.observed_gr, user_name, 
                     "observed_network")
     plot_network(config.road_dens, config.gtg_gr, user_name, "GTG")
-    plot_networks(algorithm, 4, config, "JULIEN", config.parameters["threshold"])
+    plot_networks(algorithm, 9, config, user_name, config.parameters["threshold"])
