@@ -19,13 +19,15 @@ pip install -e git+https://github.com/projectmesa/mesa#egg=mesa
 
 ## Folder structure
 
-In the main you find the file main.py in which you can run the model. This is supported by serveral files in the folders data and code.
+In the main you find the file main.py in which you can run the model. This is supported by serveral files in the folders data, sensitiviy_analysis and code.
 
 ### Data 
 
 The folder data contains parameter settings and data that are necessary to run the model, including our estimation of the gang sizes, location of the gangs and road density and boundaries of the main areas of Hollenbeck. In addition basic parameter settings for the model are in this folder (minimal and maximal jump length, etc.).
 
+### Sensitivity_analysis
 
+In order to run the sensitivity analysis, the .npy files should be stored in the folders of the walking method. When sensitive.py is run in this folder plots are created of the accuracy measures ACC, F1 and MCC at different threshold values of edge creation, as well as for the node density, the nodal variance degree and the centrality.
 
 ### Classes
 In the folder code, our main code is saved with three subfolders: classes, helpers and visualization.
@@ -41,8 +43,7 @@ In schedule.py the schedule of the order in which the agents move is defined.
 
 The folder helpers contains glasbey.py and helpers.py
 
-In glasbey.py .....
-
+In glasbey.py is used for color generation of the boundaries ([github](https://github.com/taketwo/glasbey)).
 In helpers.py methods are described that help to get parameters from the model and support running of the model.
 
 ### Visualization
@@ -50,6 +51,8 @@ In helpers.py methods are described that help to get parameters from the model a
 Visualization contains visualizer.py.
 
 Visualizer.py contains methods to make plots of the data collected.
+
+
 
 
 ## Running the model
