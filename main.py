@@ -23,6 +23,7 @@ if __name__ == "__main__":
 
     check_cmd_args(algorithm, simulations, iterations, iter_check, input_data, num)
 
+    simulations, iterations = int(simulations), int(iterations)
     iter_check, num = int(iter_check), int(num)
     directory = os.path.dirname(os.path.realpath(__file__))
     data_directory = os.path.join(directory, "data")
@@ -48,4 +49,4 @@ if __name__ == "__main__":
     plot_network(config.road_dens, config.observed_gr, user_name, 
                     "observed_network")
     plot_network(config.road_dens, config.gtg_gr, user_name, "GTG")
-    plot_networks(algorithm, simulations, config, user_name, config.parameters["threshold"])
+    plot_networks(algorithm, simulations, config, user_name)
