@@ -1,19 +1,26 @@
-# Agents
-# Agents-based modeling
-# University of Amsterdam
-# Julien Fer, Inge Bieger, Jorien Lokker, Jasper, Heleen
-#
-# This script contains the functionality to represent gang members.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+"""
+This script contains several representation of agents for simulation regarding
+gang rivalry in Hollenbeck. The first agent is just a simple Gang representation
+containing primary information. The other agents represent (individual) members
+of a specific gang. The main difference between these agents is their mobility
+algorithm.
+"""
+
+# Import built-in libraries
 import math
 import random
+
+# Import libraries
 import numpy as np
 from mesa import Agent
 
 class Gang(object):
     def __init__(self, number, coords, size):
         """
-        Gang represents a node with a id , 
+        Gang represents a node with a id ,
         size of members and coordinates
 
         Input:
@@ -23,41 +30,63 @@ class Gang(object):
         Output:
             Node representation of Gang with id
         """
-        
+
         self.number = number
         self.coords = coords
         self.size = size
 
 
 class BM(Agent):
+    """
+    Representation of an agent that walks according a Brownian Motion algorithm.
+    """
     def __init__(self, unique_id, model, pos, number, beta):
+        """
+        Initialize each agent with a unique id, model, the position of their
+        home location, gang number and beta (probabilty to cross one boundary)
+        """
+
         super().__init__(unique_id, model)
         self.pos = pos
         self.number = number
         self.beta = beta
 
     def random_move(self):
+        """
+        Human mobility algorithm (Brownian Motion)
+        """
 
+        # Start algorithm
         while True:
+
+            # Unpack current position, and determine new position
             x, y = self.pos
             x1 = x + np.random.normal()
             x2 = y + np.random.normal()
             new_pos = (x1, x2)
 
+            # Checks if new position is in area. If not algorithm starts over
             if not self.model.area.out_of_bounds(new_pos):
+
+                # Get the corresponding new region
                 new_pos_int = (int(x1), int(x2))
                 new_region = self.model.config.areas[new_pos_int]
 
+                # If new region is a boundary then algrotihm starts over
                 if new_region == 24:
                     continue
 
+                # Determines the amount of boundaries the agent has to cross
                 old_region = self.model.config.areas[(int(x), int(y))]
-                borders_crossed = self.model.config.boundaries[old_region, 
+                borders_crossed = self.model.config.boundaries[old_region,
                                                                 new_region]
 
+                # Checks if agent wants to cross that many boundaries.
+                # If so, make move
                 if random.uniform(0, 1) < self.beta ** borders_crossed:
                     self.model.area.move_agent(self, new_pos)
 
+                # End algorithm
                 break
 
 class GangMemberB(BM):
@@ -84,16 +113,16 @@ class GangMemberB(BM):
 
 class SBLN(Agent):
     """
-    An agent that moves according a Semi-Biased Levy walk (flight) model. This 
-    agent determines its bias based on all the set space of each gang and on 
+    An agent that moves according a Semi-Biased Levy walk (flight) model. This
+    agent determines its bias based on all the set space of each gang and on
     the current status of the rivalry matrix.
     """
 
-    def __init__(self, unique_id, model, pos, number, min_jump, 
+    def __init__(self, unique_id, model, pos, number, min_jump,
                     weight_home, bounded_pareto, kappa, beta):
         """
-        Each agent is initialized at its home location (set space) and 
-        the Gang's id 
+        Each agent is initialized at its home location (set space) and
+        the Gang's id
         """
 
         super().__init__(unique_id, model)
@@ -150,11 +179,11 @@ class SBLN(Agent):
                     continue
 
                 boundaries = self.model.config.boundaries[
-                                    old_region, 
+                                    old_region,
                                     new_region
                                     ]
                 chance = self.beta ** boundaries
-                
+
                 if random.uniform(0, 1) < chance:
                     self.model.area.move_agent(self, (x, y))
                     # self.model.grid.move_agent(self, (int(x), int(y)))
@@ -285,7 +314,7 @@ class GRAV(SBLN):
                 if new_region == 24:
                     continue
 
-                boundaries = self.model.config.boundaries[old_region, 
+                boundaries = self.model.config.boundaries[old_region,
                                                             new_region]
                 chance = self.beta ** boundaries
 
