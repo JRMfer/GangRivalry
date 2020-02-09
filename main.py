@@ -34,18 +34,18 @@ if __name__ == "__main__":
     filenames = get_filenames(data_directory, input_data)
     config = Configuration(filenames)
 
-    # # run simulations for given walking method
-    # for sim in tqdm(range(simulations)):
-    #     model = GangRivalry(config, algorithm, iter_check)
-    #     rivalry_mat = model.run_model(step_count=iterations)
-    #     np.save(os.path.join(results_algorithms, 
-    #                 f"rivalry_matrix_sim{num + sim}"), rivalry_mat)
-    #     data = model.datacollector.get_model_vars_dataframe()
-    #     data.to_csv(os.path.join(results_algorithms,
-    #                              f"datacollector_sim{num + sim}.csv"))
+    # run simulations for given walking method
+    for sim in tqdm(range(simulations)):
+        model = GangRivalry(config, algorithm, iter_check)
+        rivalry_mat = model.run_model(step_count=iterations)
+        np.save(os.path.join(results_algorithms, 
+                    f"rivalry_matrix_sim{num + sim}"), rivalry_mat)
+        data = model.datacollector.get_model_vars_dataframe()
+        data.to_csv(os.path.join(results_algorithms,
+                                 f"datacollector_sim{num + sim}.csv"))
 
-    plot_metrics(algorithm, 5, user_name)
+    plot_metrics(algorithm, simulations, user_name)
     plot_network(config.road_dens, config.observed_gr, user_name, 
                     "observed_network")
     plot_network(config.road_dens, config.gtg_gr, user_name, "GTG")
-    plot_networks(algorithm, 5, config, user_name, config.parameters["threshold"])
+    plot_networks(algorithm, simulations, config, user_name, config.parameters["threshold"])
